@@ -1,0 +1,10 @@
+.idea/
+bin/
+obj/
+.vs/
+.vscode/
+
+# Local runtime tooling in cloud agent
+.dotnet/
+.tools/
+dotnet-install.sh

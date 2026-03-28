@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.13">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AML.Application\AML.Application.csproj" />
+    <ProjectReference Include="..\AML.Infrastructure\AML.Infrastructure.csproj" />
+    <ProjectReference Include="..\AML.Orchestrator\AML.Orchestrator.csproj" />
+    <ProjectReference Include="..\AML.Genesys\AML.Genesys.csproj" />
+    <ProjectReference Include="..\AML.Adapters.Dynamic\AML.Adapters.Dynamic.csproj" />
+    <ProjectReference Include="..\AML.RulesEngine\AML.RulesEngine.csproj" />
+    <ProjectReference Include="..\AML.SDK\AML.SDK.csproj" />
+  </ItemGroup>
+
+</Project>

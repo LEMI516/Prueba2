@@ -1,0 +1,6 @@
+@AML.Gateway_HostAddress = http://localhost:5175
+
+GET {{AML.Gateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
