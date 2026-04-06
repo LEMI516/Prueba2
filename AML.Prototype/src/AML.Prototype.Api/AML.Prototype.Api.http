@@ -1,0 +1,42 @@
+@AML.Prototype.Api_HostAddress = http://localhost:5254
+
+GET {{AML.Prototype.Api_HostAddress}}/health
+Accept: application/json
+
+###
+
+POST {{AML.Prototype.Api_HostAddress}}/api/prototype/integrations/seed-local
+Accept: application/json
+
+###
+
+GET {{AML.Prototype.Api_HostAddress}}/api/prototype/integrations
+Accept: application/json
+
+###
+
+POST {{AML.Prototype.Api_HostAddress}}/api/prototype/executions/run
+Content-Type: application/json
+
+{
+  "integrationKey": "mock-billing",
+  "pathParameters": {
+    "customerId": "abc123"
+  }
+}
+
+###
+
+POST {{AML.Prototype.Api_HostAddress}}/api/prototype/executions/run
+Content-Type: application/json
+
+{
+  "integrationKey": "mock-payment",
+  "payload": {
+    "customerId": "abc123",
+    "amount": 1450,
+    "currency": "USD"
+  }
+}
+
+###
