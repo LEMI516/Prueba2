@@ -23,6 +23,10 @@ Ver diagrama y detalle de relaciones:
 
 - `docs/database-diagram.md`
 
+## Documentación adicional
+
+- `docs/manual-azure-api-management.md`: manual de uso y mejores prácticas de Azure API Management (APIM)
+
 ## Cadena de conexión
 
 Configurada en:
