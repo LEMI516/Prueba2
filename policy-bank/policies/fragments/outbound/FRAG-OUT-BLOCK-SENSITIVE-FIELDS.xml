@@ -1,0 +1,19 @@
+<fragment>
+  <set-body>@{
+    var src = context.Response.Body.As<JObject>(preserveContent: true);
+    if (src == null)
+    {
+      return context.Response.Body.As<string>(preserveContent: true);
+    }
+
+    src.Property("password")?.Remove();
+    src.Property("token")?.Remove();
+    src.Property("secret")?.Remove();
+    src.Property("cvv")?.Remove();
+    src.Property("pan")?.Remove();
+    src.Property("cardNumber")?.Remove();
+    src.Property("ssn")?.Remove();
+
+    return src.ToString();
+  }</set-body>
+</fragment>

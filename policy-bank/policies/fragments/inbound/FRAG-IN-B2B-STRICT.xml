@@ -1,0 +1,7 @@
+<fragment>
+  <validate-client-certificate validate-revocation="true" />
+  <ip-filter action="allow">
+    <address>{{partner-ip-1}}</address>
+    <address>{{partner-ip-2}}</address>
+  </ip-filter>
+</fragment>

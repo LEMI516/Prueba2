@@ -22,11 +22,16 @@ policy-bank/
     products-structure.md
     release-checklist.md
     architecture-notes.md
+    setup-from-zero.md
   policies/
     README.md
     base/
       base-policy.xml
       base-policy-encrypted.xml
+    fragments/
+      inbound/
+      outbound/
+      on-error/
     packs/
       PACK-BASE.xml
       PACK-AUTH-JWT.xml
@@ -40,6 +45,9 @@ policy-bank/
       MAP-ONLY-FIELDS.xml
       MASK-CARD-LAST4.xml
       BLOCK-SENSITIVE-FIELDS.xml
+    compositions/
+      COMP-ESC-001-public-get-cache.xml
+      COMP-ESC-006-encrypted-payload.xml
 ```
 
 ## Como usar este banco
@@ -49,6 +57,7 @@ policy-bank/
 3. Componer una politica final por API/Product/Operation.
 4. Ajustar placeholders (`{{tenant-id}}`, `{{backend-base-url}}`, etc.).
 5. Probar en DEV/QA con `docs/release-checklist.md`.
+6. Para reutilizacion nativa en APIM usar `policies/fragments` + `include-fragment` (ver `docs/setup-from-zero.md`).
 
 ## Reglas de oro
 

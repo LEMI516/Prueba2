@@ -1,0 +1,4 @@
+<fragment>
+  <set-header name="x-powered-by" exists-action="delete" />
+  <set-header name="server" exists-action="delete" />
+</fragment>

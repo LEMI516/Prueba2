@@ -1,0 +1,18 @@
+<fragment>
+  <set-header name="x-correlation-id" exists-action="override">
+    <value>@(context.Request.Headers.GetValueOrDefault("x-correlation-id",""))</value>
+  </set-header>
+  <return-response>
+    <set-status code="500" reason="Internal Server Error" />
+    <set-header name="Content-Type" exists-action="override">
+      <value>application/json</value>
+    </set-header>
+    <set-body>{
+  "error": {
+    "code": "apim_error",
+    "message": "Error procesando la solicitud.",
+    "correlationId": "@(context.Request.Headers.GetValueOrDefault("x-correlation-id",""))"
+  }
+}</set-body>
+  </return-response>
+</fragment>

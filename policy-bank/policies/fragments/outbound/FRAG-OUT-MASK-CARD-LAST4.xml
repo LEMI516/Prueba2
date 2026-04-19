@@ -1,0 +1,14 @@
+<fragment>
+  <set-body>@{
+    var src = context.Response.Body.As<JObject>(preserveContent: true);
+    var pan = ((string)src["card"]?["number"]) ?? "";
+    var digits = new string(pan.Where(char.IsDigit).ToArray());
+    var last4 = digits.Length >= 4 ? digits.Substring(digits.Length - 4) : null;
+
+    var result = new JObject();
+    result["cardBrand"] = (string)src["card"]?["brand"];
+    result["cardLast4"] = last4;
+    result["cardMasked"] = last4 != null ? $"**** **** **** {last4}" : null;
+    return result.ToString();
+  }</set-body>
+</fragment>

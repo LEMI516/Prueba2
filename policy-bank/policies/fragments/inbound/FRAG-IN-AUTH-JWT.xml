@@ -1,0 +1,21 @@
+<fragment>
+  <validate-jwt
+    header-name="Authorization"
+    require-scheme="Bearer"
+    require-expiration-time="true"
+    failed-validation-httpcode="401"
+    failed-validation-error-message="Token invalido o ausente.">
+    <openid-config url="https://login.microsoftonline.com/{{tenant-id}}/v2.0/.well-known/openid-configuration" />
+    <audiences>
+      <audience>{{api-audience-app-id-uri}}</audience>
+    </audiences>
+    <!--
+    <required-claims>
+      <claim name="scp" match="any">
+        <value>api.read</value>
+        <value>api.write</value>
+      </claim>
+    </required-claims>
+    -->
+  </validate-jwt>
+</fragment>

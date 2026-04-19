@@ -1,0 +1,22 @@
+<policies>
+  <inbound>
+    <base />
+    <include-fragment fragment-id="FRAG-IN-BASE" />
+    <include-fragment fragment-id="FRAG-IN-THROTTLING" />
+  </inbound>
+
+  <backend>
+    <base />
+  </backend>
+
+  <outbound>
+    <base />
+    <include-fragment fragment-id="FRAG-OUT-BASE" />
+    <include-fragment fragment-id="FRAG-OUT-CACHE-GET" />
+  </outbound>
+
+  <on-error>
+    <base />
+    <include-fragment fragment-id="FRAG-ERR-OBSERVABILITY" />
+  </on-error>
+</policies>

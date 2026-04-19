@@ -1,0 +1,3 @@
+<fragment>
+  <cache-store duration="{{cache-duration-seconds}}" />
+</fragment>

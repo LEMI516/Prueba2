@@ -1,0 +1,53 @@
+<fragment>
+  <set-variable name="tokenValue" value="@{
+    var auth = context.Request.Headers.GetValueOrDefault("Authorization", "");
+    if (auth.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+    {
+      return auth.Substring("Bearer ".Length).Trim();
+    }
+    return "";
+  }" />
+
+  <choose>
+    <when condition="@(((string)context.Variables["tokenValue"]).Length == 0)">
+      <return-response>
+        <set-status code="401" reason="Unauthorized" />
+        <set-header name="Content-Type" exists-action="override">
+          <value>application/json</value>
+        </set-header>
+        <set-body>{"error":{"code":"missing_bearer_token","message":"Authorization Bearer token requerido."}}</set-body>
+      </return-response>
+    </when>
+  </choose>
+
+  <send-request mode="new" response-variable-name="introspectionResponse" timeout="20" ignore-error="false">
+    <set-url>{{oauth-introspection-url}}</set-url>
+    <set-method>POST</set-method>
+    <set-header name="Content-Type" exists-action="override">
+      <value>application/x-www-form-urlencoded</value>
+    </set-header>
+    <set-header name="Authorization" exists-action="override">
+      <value>{{introspection-basic-auth}}</value>
+    </set-header>
+    <set-body>@($"token={Uri.EscapeDataString((string)context.Variables["tokenValue"])}")</set-body>
+  </send-request>
+
+  <set-variable name="isActiveToken" value="@{
+    var resp = (IResponse)context.Variables["introspectionResponse"];
+    if (resp == null || resp.StatusCode != 200) return false;
+    var body = resp.Body.As<JObject>(preserveContent: true);
+    return (bool?)body["active"] ?? false;
+  }" />
+
+  <choose>
+    <when condition="@(!(bool)context.Variables["isActiveToken"])">
+      <return-response>
+        <set-status code="401" reason="Unauthorized" />
+        <set-header name="Content-Type" exists-action="override">
+          <value>application/json</value>
+        </set-header>
+        <set-body>{"error":{"code":"invalid_token","message":"Token opaco invalido o inactivo."}}</set-body>
+      </return-response>
+    </when>
+  </choose>
+</fragment>

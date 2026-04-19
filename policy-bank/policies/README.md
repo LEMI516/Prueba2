@@ -23,6 +23,25 @@ policies/
     MAP-ONLY-FIELDS.xml
     MASK-CARD-LAST4.xml
     BLOCK-SENSITIVE-FIELDS.xml
+  fragments/
+    inbound/
+      FRAG-IN-BASE.xml
+      FRAG-IN-AUTH-JWT.xml
+      FRAG-IN-AUTH-OAUTH-OPAQUE.xml
+      FRAG-IN-ENCRYPTION-PAYLOAD.xml
+      FRAG-IN-THROTTLING.xml
+      FRAG-IN-B2B-STRICT.xml
+    outbound/
+      FRAG-OUT-BASE.xml
+      FRAG-OUT-CACHE-GET.xml
+      FRAG-OUT-MAP-ONLY-FIELDS.xml
+      FRAG-OUT-MASK-CARD-LAST4.xml
+      FRAG-OUT-BLOCK-SENSITIVE-FIELDS.xml
+    on-error/
+      FRAG-ERR-OBSERVABILITY.xml
+  compositions/
+    COMP-ESC-001-public-get-cache.xml
+    COMP-ESC-006-encrypted-payload.xml
 ```
 
 ## Reglas de uso
@@ -32,6 +51,37 @@ policies/
 3. Aplicar politicas por scope correcto (Global, Product, API, Operation).
 4. Probar siempre con datos anonimizados en DEV/QA.
 5. Si hay payload cifrado extremo a extremo, APIM debe operar en pass-through.
+
+## Reutilizacion recomendada (fragments)
+
+1. Crear Policy Fragments en APIM con el contenido de `policies/fragments`.
+2. Asignar IDs estables (por ejemplo, `FRAG-IN-AUTH-JWT`).
+3. Componer politicas por API/Product usando `include-fragment`.
+4. Tomar ejemplos de `policies/compositions`.
+
+Ejemplo:
+
+```xml
+<policies>
+  <inbound>
+    <base />
+    <include-fragment fragment-id="FRAG-IN-BASE" />
+    <include-fragment fragment-id="FRAG-IN-AUTH-JWT" />
+    <include-fragment fragment-id="FRAG-IN-THROTTLING" />
+  </inbound>
+  <backend>
+    <base />
+  </backend>
+  <outbound>
+    <base />
+    <include-fragment fragment-id="FRAG-OUT-BASE" />
+  </outbound>
+  <on-error>
+    <base />
+    <include-fragment fragment-id="FRAG-ERR-OBSERVABILITY" />
+  </on-error>
+</policies>
+```
 
 ## Orden de composicion recomendado
 
@@ -49,8 +99,7 @@ policies/
 - `{{tenant-id}}`
 - `{{api-audience-app-id-uri}}`
 - `{{backend-base-url}}`
-- `{{introspection-url}}`
-- `{{introspection-client-id}}`
-- `{{introspection-client-secret}}`
+- `{{oauth-introspection-url}}`
+- `{{introspection-basic-auth}}`
 
 Reemplaza placeholders por valores de cada ambiente.
