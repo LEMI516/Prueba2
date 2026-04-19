@@ -1,0 +1,73 @@
+<policies>
+  <inbound>
+    <base />
+
+    <!-- Exige indicador de payload cifrado en operaciones de escritura -->
+    <choose>
+      <when condition="@(
+        context.Request.Method == "POST" ||
+        context.Request.Method == "PUT" ||
+        context.Request.Method == "PATCH"
+      )">
+        <choose>
+          <when condition="@(!context.Request.Headers.ContainsKey("x-payload-encrypted") || context.Request.Headers.GetValueOrDefault("x-payload-encrypted","false").ToLowerInvariant() != "true")">
+            <return-response>
+              <set-status code="400" reason="Bad Request" />
+              <set-header name="Content-Type" exists-action="override">
+                <value>application/json</value>
+              </set-header>
+              <set-body>{
+  "error": {
+    "code": "payload_encryption_required",
+    "message": "Se requiere x-payload-encrypted=true para metodos de escritura."
+  }
+}</set-body>
+            </return-response>
+          </when>
+        </choose>
+      </when>
+    </choose>
+
+    <!-- Content-Type esperado para payload cifrado -->
+    <choose>
+      <when condition="@(
+        context.Request.Method == "POST" ||
+        context.Request.Method == "PUT" ||
+        context.Request.Method == "PATCH"
+      )">
+        <choose>
+          <when condition="@(
+            !context.Request.Headers.ContainsKey("Content-Type") ||
+            (
+              !context.Request.Headers.GetValueOrDefault("Content-Type","").ToLowerInvariant().Contains("application/jose") &&
+              !context.Request.Headers.GetValueOrDefault("Content-Type","").ToLowerInvariant().Contains("application/octet-stream") &&
+              !context.Request.Headers.GetValueOrDefault("Content-Type","").ToLowerInvariant().Contains("application/json")
+            )
+          )">
+            <return-response>
+              <set-status code="415" reason="Unsupported Media Type" />
+              <set-header name="Content-Type" exists-action="override">
+                <value>application/json</value>
+              </set-header>
+              <set-body>{
+  "error": {
+    "code": "unsupported_content_type",
+    "message": "Use application/jose, application/octet-stream o application/json segun su esquema de cifrado."
+  }
+}</set-body>
+            </return-response>
+          </when>
+        </choose>
+      </when>
+    </choose>
+  </inbound>
+  <backend>
+    <base />
+  </backend>
+  <outbound>
+    <base />
+  </outbound>
+  <on-error>
+    <base />
+  </on-error>
+</policies>

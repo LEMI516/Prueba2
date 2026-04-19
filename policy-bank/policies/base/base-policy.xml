@@ -1,0 +1,36 @@
+<policies>
+  <inbound>
+    <base />
+    <set-header name="x-correlation-id" exists-action="override">
+      <value>@(context.Request.Headers.GetValueOrDefault("x-correlation-id", Guid.NewGuid().ToString()))</value>
+    </set-header>
+    <set-backend-service base-url="{{backend-base-url}}" />
+  </inbound>
+
+  <backend>
+    <base />
+  </backend>
+
+  <outbound>
+    <base />
+    <set-header name="x-powered-by" exists-action="delete" />
+    <set-header name="server" exists-action="delete" />
+  </outbound>
+
+  <on-error>
+    <base />
+    <return-response>
+      <set-status code="500" reason="Internal Server Error" />
+      <set-header name="Content-Type" exists-action="override">
+        <value>application/json</value>
+      </set-header>
+      <set-body>{
+  "error": {
+    "code": "apim_error",
+    "message": "Ocurrio un error procesando la solicitud.",
+    "correlationId": "@(context.Request.Headers.GetValueOrDefault("x-correlation-id",""))"
+  }
+}</set-body>
+    </return-response>
+  </on-error>
+</policies>

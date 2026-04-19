@@ -1,0 +1,28 @@
+<policies>
+  <inbound>
+    <base />
+  </inbound>
+
+  <backend>
+    <base />
+  </backend>
+
+  <outbound>
+    <base />
+    <set-body>@{
+        var src = context.Response.Body.As<JObject>(preserveContent: true);
+
+        var result = new JObject();
+        result["clienteId"] = (string)src["id"];
+        result["nombre"] = (string)src["fullName"];
+        result["correo"] = (string)src["contact"]?["email"];
+        result["estado"] = (string)src["status"];
+
+        return result.ToString();
+    }</set-body>
+  </outbound>
+
+  <on-error>
+    <base />
+  </on-error>
+</policies>

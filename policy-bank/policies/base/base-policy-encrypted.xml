@@ -1,0 +1,72 @@
+<policies>
+  <inbound>
+    <base />
+
+    <set-header name="x-correlation-id" exists-action="override">
+      <value>@(context.Request.Headers.GetValueOrDefault("x-correlation-id", Guid.NewGuid().ToString()))</value>
+    </set-header>
+
+    <choose>
+      <when condition="@(!context.Request.Headers.ContainsKey("x-payload-encrypted") || context.Request.Headers.GetValueOrDefault("x-payload-encrypted", "false").ToLowerInvariant() != "true")">
+        <return-response>
+          <set-status code="400" reason="Bad Request" />
+          <set-header name="Content-Type" exists-action="override">
+            <value>application/json</value>
+          </set-header>
+          <set-body>{
+  "error": {
+    "code": "payload_encryption_required",
+    "message": "Se requiere x-payload-encrypted=true."
+  }
+}</set-body>
+        </return-response>
+      </when>
+    </choose>
+
+    <validate-jwt header-name="Authorization"
+                  require-scheme="Bearer"
+                  require-expiration-time="true"
+                  failed-validation-httpcode="401"
+                  failed-validation-error-message="Token invalido o ausente.">
+      <openid-config url="https://login.microsoftonline.com/{{tenant-id}}/v2.0/.well-known/openid-configuration" />
+      <audiences>
+        <audience>{{api-audience-app-id-uri}}</audience>
+      </audiences>
+    </validate-jwt>
+
+    <rate-limit-by-key calls="100" renewal-period="60"
+      counter-key="@(context.Subscription?.Key ?? context.Request.IpAddress)" />
+
+    <quota-by-key calls="50000" renewal-period="86400"
+      counter-key="@(context.Subscription?.Key ?? context.Request.IpAddress)" />
+
+    <set-backend-service base-url="{{backend-base-url}}" />
+  </inbound>
+
+  <backend>
+    <base />
+  </backend>
+
+  <outbound>
+    <base />
+    <set-header name="x-powered-by" exists-action="delete" />
+    <set-header name="server" exists-action="delete" />
+  </outbound>
+
+  <on-error>
+    <base />
+    <return-response>
+      <set-status code="500" reason="Internal Server Error" />
+      <set-header name="Content-Type" exists-action="override">
+        <value>application/json</value>
+      </set-header>
+      <set-body>{
+  "error": {
+    "code": "apim_error",
+    "message": "Ocurrio un error procesando la solicitud.",
+    "correlationId": "@(context.Request.Headers.GetValueOrDefault("x-correlation-id",""))"
+  }
+}</set-body>
+    </return-response>
+  </on-error>
+</policies>

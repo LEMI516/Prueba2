@@ -1,0 +1,23 @@
+<policies>
+  <inbound>
+    <base />
+
+    <rate-limit-by-key calls="{{rate-calls}}" renewal-period="{{rate-period-seconds}}"
+      counter-key="@(context.Subscription?.Key ?? context.Request.IpAddress)" />
+
+    <quota-by-key calls="{{quota-calls}}" renewal-period="{{quota-period-seconds}}"
+      counter-key="@(context.Subscription?.Key ?? context.Request.IpAddress)" />
+  </inbound>
+
+  <backend>
+    <base />
+  </backend>
+
+  <outbound>
+    <base />
+  </outbound>
+
+  <on-error>
+    <base />
+  </on-error>
+</policies>

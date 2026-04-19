@@ -1,0 +1,18 @@
+<policies>
+  <inbound>
+    <base />
+    <cache-lookup vary-by-developer="false"
+                  vary-by-developer-groups="false"
+                  downstream-caching-type="none" />
+  </inbound>
+  <backend>
+    <base />
+  </backend>
+  <outbound>
+    <base />
+    <cache-store duration="{{cache-duration-seconds}}" />
+  </outbound>
+  <on-error>
+    <base />
+  </on-error>
+</policies>

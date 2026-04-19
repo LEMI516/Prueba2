@@ -1,0 +1,19 @@
+<policies>
+  <inbound>
+    <base />
+    <validate-client-certificate validate-revocation="true" />
+    <ip-filter action="allow">
+      <address>{{partner-ip-1}}</address>
+      <address>{{partner-ip-2}}</address>
+    </ip-filter>
+  </inbound>
+  <backend>
+    <base />
+  </backend>
+  <outbound>
+    <base />
+  </outbound>
+  <on-error>
+    <base />
+  </on-error>
+</policies>
